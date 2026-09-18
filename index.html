@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hilee — Garrafa Térmica Versão Frutas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<!-- SDK público do Mercado Pago — precisa vir ANTES de script.js.
+     Usado só pra tokenizar o cartão no navegador (Public Key), nunca
+     manda o número do cartão pro nosso servidor. -->
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="mark">H</div>
+    <div class="word">HiIEE</div>
+  </div>
+  <nav>
+    <a href="#loja">A garrafa</a>
+    <a href="#colecao">Sabores</a>
+    <a href="#loja">Comprar</a>
+  </nav>
+  <button class="cart-pill" onclick="document.getElementById('loja').scrollIntoView()">🧺 Sacola · <span id="cart-count">0</span></button>
+</div>
+
+<section class="hero">
+  <div class="hero-copy">
+    <div class="eyebrow">Versão Frutas · Aço inoxidável cirúrgico</div>
+    <h1>Uma garrafa pra cada sabor de dia.</h1>
+    <p class="sub">Térmica de verdade — mantém gelado até 24h e quente até 12h — em sete cores que parecem ter saído de uma fruteira. Alça de mosquetão, bico antivazamento, sua marcação de nível.</p>
+    <div class="hero-stats">
+      <div><span class="num">4.8 ★</span><span class="lbl">22,4 mil avaliações</span></div>
+      <div><span class="num">93,7K</span><span class="lbl">unidades vendidas</span></div>
+      <div><span class="num">24h</span><span class="lbl">mantém gelado</span></div>
+    </div>
+  </div>
+  <div class="hero-img">
+    <img src="images/hero_group.jpeg" alt="Coleção de garrafas Hilee em várias cores">
+    <div class="hero-badge">frete grátis</div>
+  </div>
+</section>
+
+<section class="shop" id="loja">
+  <div class="shop-visual">
+    <img id="visual-img" src="images/hero_group.jpeg" alt="Garrafa Hilee selecionada">
+    <div class="cap" id="visual-cap">Toda a coleção Versão Frutas, lado a lado.</div>
+  </div>
+
+  <div class="shop-panel">
+    <h2>Garrafa Térmica Hilee — Versão Frutas</h2>
+    <div class="price-row">
+      <span class="now" id="price-now">R$ 80,00</span>
+      <span class="was" id="price-was"></span>
+      <span class="badge">frete grátis</span>
+    </div>
+
+    <div class="field">
+      <label>Sabor · <span class="picked" id="picked-color">Mirtilo</span></label>
+      <div class="swatches" id="swatches"></div>
+    </div>
+
+    <div class="field">
+      <label>Tamanho · <span class="picked" id="picked-size">600ml</span></label>
+      <div class="sizes" id="sizes"></div>
+    </div>
+
+    <div class="field">
+      <label>Quantidade</label>
+      <div class="qty-row">
+        <div class="qty-control">
+          <button onclick="changeQty(-1)">−</button>
+          <span id="qty">1</span>
+          <button onclick="changeQty(1)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="buy-box">
+      <div class="buy-total">
+        <span class="lbl">Total</span>
+        <span class="val" id="total-val">R$ 80,00</span>
+      </div>
+      <div class="pay-methods">
+        <span>Pix</span><span>Cartão</span>
+      </div>
+      <button class="cta" onclick="openCheckout()">Finalizar compra</button>
+      <button class="cta secondary" onclick="addToCart()">Adicionar à sacola</button>
+      <div class="reassure">
+        <div>🚚 Chega em 3–6 dias úteis</div>
+        <div>🔒 Pagamento via Mercado Pago</div>
+        <div>↩️ Troca em até 7 dias</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="collection" id="colecao">
+  <h2>Toda a coleção Versão Frutas</h2>
+  <div class="collection-grid" id="collection-grid"></div>
+</section>
+
+<footer>
+  <span>© 2026 Hilee Official Shop — loja não afiliada à marca original</span>
+  <span>Site de demonstração criado para fins de estudo de checkout</span>
+</footer>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <button class="close" onclick="closeCheckout()">✕</button>
+
+    <!-- Etapa 1: escolher o método -->
+    <div id="step-method" class="checkout-step">
+      <h3>Fechar pedido</h3>
+      <div class="sum" id="modal-summary"></div>
+      <div class="pay-options">
+        <div class="pay-option active" data-method="pix" onclick="selectMethod(this)"><span class="ic">💠</span> Pix — aprovação na hora</div>
+        <div class="pay-option" data-method="cartao" onclick="selectMethod(this)"><span class="ic">💳</span> Cartão de crédito</div>
+      </div>
+      <button class="cta" onclick="finishCheckout()">Continuar</button>
+      <p class="note">Pagamento processado com segurança via Mercado Pago. Nenhum dado de cartão fica salvo neste site.</p>
+    </div>
+
+    <!-- Etapa 2a: Pix -->
+    <div id="step-pix" class="checkout-step hidden">
+      <h3>Pague com Pix</h3>
+      <p class="note">Escaneie o QR Code no app do seu banco, ou copie o código abaixo.</p>
+      <div id="pix-loading" class="note">Gerando cobrança…</div>
+      <img id="pix-qr-img" alt="QR Code Pix" class="pix-qr hidden">
+      <textarea id="pix-copia-cola" class="pix-copiaecola hidden" readonly></textarea>
+      <button class="cta secondary hidden" id="pix-copy-btn" onclick="copiarPix()">Copiar código Pix</button>
+      <div id="pix-status" class="pix-status hidden">Aguardando pagamento…</div>
+    </div>
+
+    <!-- Etapa 2b: Cartão -->
+    <div id="step-cartao" class="checkout-step hidden">
+      <h3>Pague com cartão</h3>
+      <div class="field"><label>Número do cartão</label><input id="card-number" inputmode="numeric" placeholder="0000 0000 0000 0000"></div>
+      <div class="field"><label>Nome impresso no cartão</label><input id="card-name" placeholder="Nome como está no cartão"></div>
+      <div class="card-row">
+        <div class="field"><label>Mês</label><input id="card-month" inputmode="numeric" placeholder="MM" maxlength="2"></div>
+        <div class="field"><label>Ano</label><input id="card-year" inputmode="numeric" placeholder="AA" maxlength="2"></div>
+        <div class="field"><label>CVV</label><input id="card-cvv" inputmode="numeric" placeholder="123" maxlength="4"></div>
+      </div>
+      <div class="field"><label>CPF do titular</label><input id="card-cpf" inputmode="numeric" placeholder="Somente números"></div>
+      <div class="field"><label>E-mail</label><input id="card-email" type="email" placeholder="seu@email.com"></div>
+      <button class="cta" id="card-submit-btn" onclick="pagarComCartao()">Pagar</button>
+      <div id="card-status" class="note"></div>
+    </div>
+
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
