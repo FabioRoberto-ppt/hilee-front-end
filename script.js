@@ -1,6 +1,6 @@
 // ===== Configuração =====
-// Troque pela URL do seu backend quando for pra produção (ex: sua URL do ngrok/host real).
-const API_BASE = 'http://localhost:3000';
+// URL do seu backend hospedado no Render
+const API_BASE = 'https://hilee-backend.onrender.com';
 
 // Public Key de TESTE do Mercado Pago (painel > Loja Hilee > Credenciais de teste).
 // É segura de expor no frontend — é feita pra isso, ao contrário do Access Token.
